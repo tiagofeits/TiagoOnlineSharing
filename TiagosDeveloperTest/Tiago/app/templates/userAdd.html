@@ -1,0 +1,54 @@
+﻿<h2>Create</h2>
+<form class="form-horizontal" name="frmAddUser" ng-submit="createUser(user)" novalidate>
+    <h4>Create a new user</h4>
+    <hr />
+
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Name</label>
+        <div class="col-lg-10">
+            <input type="text" class="form-control" name="name" ng-model="user.Name" ng-maxlength="32" required />
+            <span class="text-danger" ng-show="(frmAddUser.name.$touched || frmAddUser.name.$dirty) && frmAddUser.name.$invalid">
+                <span ng-show="frmAddUser.name.$error.required">Name is required</span>
+                <span ng-show="frmAddUser.name.$error.maxlength">Name must be less than or equal to 32 characters long</span>
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Email</label>
+        <div class="col-lg-10">
+            <input type="email" class="form-control" name="mail" ng-model="user.Email" ng-maxlength="50" required />
+            <span class="text-danger" ng-show="(frmAddUser.mail.$touched || frmAddUser.mail.$dirty) && frmAddUser.mail.$invalid">
+                <span ng-show="frmAddUser.mail.$error.required">Email is required</span>
+                <span ng-show="frmAddUser.mail.$error.email">Invalid email address</span>
+                <span ng-show="frmAddUser.mail.$error.maxlength">Email must be less than or equal to 50 characters long</span>
+            </span>
+        </div>
+    </div>
+	<div class="form-group">
+        <label class="col-lg-2 control-label">Age</label>
+        <div class="col-lg-4">
+            <input type="number" class="form-control" name="age" ng-model="user.Age" ng-maxlength="3" required min="12" max="199" />
+            <span class="text-danger" ng-show="(frmEditUser.age.$touched || frmEditUser.age.$dirty) && frmEditUser.age.$invalid">
+                <span ng-show="frmEditUser.age.$error.required">Age is required</span>
+				<span *ngIf="frmEditUser.age.hasError('min')">You must be 12 or older to use this service</span>
+				<span *ngIf="frmEditUser.age.hasError('max')">Invalid age</span>
+                <span ng-show="frmEditUser.age.$error.maxlength">Invalid Age</span>
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Address</label>
+        <div class="col-lg-10">
+            <input type="text" class="form-control" name="address" ng-model="user.Address" ng-maxlength="100" ng-minlength="2" />
+            <span class="text-danger" ng-show="frmAddUser.address.$dirty && (frmAddUser.address.$error.minlength || frmAddUser.address.$error.maxlength)">
+                Address must be between 2 and 100 characters long
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <input type="submit" class="btn btn-success" value="Create" ng-disabled="frmAddUser.$invalid" />
+            <a href="#/" class="btn btn-default">Cancel</a>
+        </div>
+    </div>
+</form>
