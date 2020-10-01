@@ -1,1 +1,87 @@
-﻿!function () { "use strict"; angular.module("app").controller("userController", ["$scope", "$filter", "dataService", function (t, e, r) { function n() { r.getUsers().then(function (r) { t.$watch("searchText", function (n) { t.users = e("filter")(r, n) }) }) } t.users = [], t.currentPage = 1, t.itemsPerPage = 5, n(), t.deleteUser = function (t) { toastr.warning("<div style='clear:both;margin-top:10px;'><div style='margin-left:15%;margin-right:5%;float:left;'><button type='button' id='confirmDelete' class='btn btn-warning'>Yes</button></div><div style='margin-left:5%;float:left;'><button type='button' class='btn btn-warning'>No</button></div ></div >", "Are you sure you want to delete this User?", { positionClass: "toast-top-right", closeButton: !1, allowHtml: !0, onShown: function (e) { $("#confirmDelete").click(function () { r.deleteUser(t).then(function () { toastr.success("User deleted successfully"), n() }, function () { toastr.error("Error while deleting user with Id: " + t) }) }) } }) }, t.sortBy = function (e) { t.sortColumn = e, t.reverse = !t.reverse } }]).controller("userAddController", ["$scope", "$location", "dataService", function (t, e, r) { t.createUser = function (t) { r.addUser(t).then(function () { toastr.success("User created successfully"), e.path("/") }, function () { toastr.error("Error while creating user") }) } }]).controller("userEditController", ["$scope", "$routeParams", "$location", "dataService", function (t, e, r, n) { t.user = {}, t.states = { showUpdateButton: !1 }, n.getUserById(e.id).then(function (e) { t.user = e, t.states.showUpdateButton = !0 }, function () { toastr.error("Error while fetching user with Id: " + e.id) }), t.updateUser = function (t) { n.editUser(t).then(function () { toastr.success("User updated successfully"), r.path("/") }, function () { toastr.error("Error while updating user") }) } }]) }();
+﻿(function () {
+    'use strict';
+
+    angular
+        .module('app')
+		//query user
+        .controller('userController', ['$scope', '$filter', 'dataService', function ($scope, $filter, dataService) {
+            $scope.users = [];
+            $scope.currentPage = 1;
+            $scope.itemsPerPage = 5;
+
+            getData();
+
+            function getData() {
+                dataService.getUsers().then(function (result) {
+                    $scope.$watch('searchText', function (term) {
+                        $scope.users = $filter('filter')(result, term);
+                    });
+                });
+            }
+
+            $scope.deleteUser = function (id) {
+                var internalButtons = "<div style='clear:both;margin-top:10px;'>";
+                internalButtons += "<div style='margin-left:15%;margin-right:5%;float:left;'>";
+                internalButtons += "<button type='button' id='confirmDelete' class='btn btn-warning'>Yes</button>";
+                internalButtons += "</div><div style='margin-left:5%;float:left;'>";
+                internalButtons += "<button type='button' class='btn btn-warning'>No</button>";
+                internalButtons += "</div ></div >";
+                toastr.warning(internalButtons, 'Are you sure you want to delete this User?',
+                    {
+                        positionClass: 'toast-top-right',
+                        closeButton: false,
+                        allowHtml: true,
+                        onShown: function (toast) {
+                            $("#confirmDelete").click(function () {
+                                dataService.deleteUser(id).then(function () {
+                                    toastr.success('User deleted successfully');
+                                    getData();
+                                }, function () {
+                                    toastr.error('Error while deleting user with Id: ' + id);
+                                });
+                            });
+                        }
+                    });
+            };
+
+            $scope.sortBy = function (column) {
+                $scope.sortColumn = column;
+                $scope.reverse = !$scope.reverse;
+            };
+        }])
+		//create new
+        .controller('userAddController', ['$scope', '$location', 'dataService', function ($scope, $location, dataService) {
+            $scope.createUser = function (user) {
+                dataService.addUser(user).then(function () {
+                    toastr.success('User created successfully');
+                    $location.path('/');
+                }, function () {
+                    toastr.error('Error while creating user');
+                });
+            };
+        }])
+		
+		//edit existing
+        .controller('userEditController', ['$scope', '$routeParams', '$location', 'dataService', function ($scope, $routeParams, $location, dataService) {
+            $scope.user = {};
+            $scope.states = {
+                showUpdateButton: false
+            };
+
+            dataService.getUserById($routeParams.id).then(function (result) {
+                $scope.user = result;
+                $scope.states.showUpdateButton = true;
+            }, function () {
+                toastr.error('Error while fetching user with Id: ' + $routeParams.id);
+            });
+
+            $scope.updateUser = function (user) {
+                dataService.editUser(user).then(function () {
+                    toastr.success('User updated successfully');
+                    $location.path('/');
+                }, function () {
+                    toastr.error('Error while updating user');
+                });
+            };
+        }]);
+})();

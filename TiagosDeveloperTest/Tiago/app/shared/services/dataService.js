@@ -1,1 +1,61 @@
-﻿!function () { "use strict"; angular.module("app").factory("dataService", ["$http", "$q", function (e, t) { var r = { getUsers: function () { var r = t.defer(); return e.get("/User/Index").then(function (e) { r.resolve(e.data) }, function () { r.reject() }), r.promise }, getUserById: function (r) { var n = t.defer(); return e.get("/User/Details/" + r).then(function (e) { n.resolve(e.data) }, function () { n.reject() }), n.promise }, addUser: function (r) { var n = t.defer(); return e.post("/User/Create", r).then(function () { n.resolve() }, function () { n.reject() }), n.promise }, editUser: function (r) { var n = t.defer(); return e.post("/User/Edit", r).then(function () { n.resolve() }, function () { n.reject() }), n.promise }, deleteUser: function (r) { var n = t.defer(); return e.post("/User/Delete", { id: r }).then(function () { n.resolve() }, function () { n.reject() }), n.promise } }; return r }]) }();
+﻿(function () {
+    'use strict';
+
+    angular
+        .module('app')
+        .factory('dataService', ['$http', '$q', function ($http, $q) {
+            var service = {};
+
+            service.getUsers = function () {
+                var deferred = $q.defer();
+                $http.get('/User/Index').then(function (result) {
+                    deferred.resolve(result.data);
+                }, function () {
+                    deferred.reject();
+                });
+                return deferred.promise;
+            };
+
+            service.getUserById = function (id) {
+                var deferred = $q.defer();
+                $http.get('/User/Details/' + id).then(function (result) {
+                    deferred.resolve(result.data);
+                }, function () {
+                    deferred.reject();
+                });
+                return deferred.promise;
+            };
+
+            service.addUser = function (user) {
+                var deferred = $q.defer();
+                $http.post('/User/Create', user).then(function () {
+                    deferred.resolve();
+                }, function () {
+                    deferred.reject();
+                });
+                return deferred.promise;
+            };
+
+            service.editUser = function (user) {
+                var deferred = $q.defer();
+                $http.post('/User/Edit', user).then(function () {
+                    deferred.resolve();
+                }, function () {
+                    deferred.reject();
+                });
+                return deferred.promise;
+            };
+
+            service.deleteUser = function (id) {
+                var deferred = $q.defer();
+                $http.post('/User/Delete', { id: id }).then(function () {
+                    deferred.resolve();
+                }, function () {
+                    deferred.reject();
+                });
+                return deferred.promise;
+            };
+
+            return service;
+        }]);
+})();
